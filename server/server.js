@@ -4,11 +4,10 @@ dotenv.config();
 import express from 'express';
 import cors from 'cors';
 import multer from 'multer';
-import { createRequire } from 'module';
+import PDFParser from 'pdf2json';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const require = createRequire(import.meta.url);
-const pdfParse = require('pdf-parse/lib/pdf-parse.js');
+
 
 
 const app = express();
@@ -81,12 +80,18 @@ app.post('/api/study-material', upload.single('file'), async (req, res) => {
   try {
     let extractedText = '';
 
-    if (req.file) {
-      if (req.file.mimetype === 'application/pdf') {
-        const parsed = await pdfParse(req.file.buffer);
-        extractedText = parsed.text;
-      } else {
-        extractedText = req.file.buffer.toString('utf-8');
+   if (req.file) {
+   if (req.file.mimetype === 'application/pdf') {
+    extractedText = await new Promise((resolve, reject) => {
+      const pdfParser = new PDFParser(null, 1);
+      pdfParser.on('pdfParser_dataError', (errData) => reject(errData.parserError));
+      pdfParser.on('pdfParser_dataReady', () => {
+        resolve(pdfParser.getRawTextContent());
+      });
+      pdfParser.parseBuffer(req.file.buffer);
+    });
+    } else {
+      extractedText = req.file.buffer.toString('utf-8');
       }
     } else if (req.body.text) {
       extractedText = req.body.text;
