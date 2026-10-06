@@ -8,8 +8,7 @@ import { createRequire } from 'module';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const require = createRequire(import.meta.url);
-const pdfParseModule = require('pdf-parse');
-const pdfParse = typeof pdfParseModule === 'function' ? pdfParseModule : (pdfParseModule.default || pdfParseModule);
+const pdfParse = require('pdf-parse/lib/pdf-parse.js');
 
 
 const app = express();
