@@ -41,7 +41,7 @@ export default function App() {
       formData.append('text', text);
     }
 
-    const response = await fetch('http://localhost:5001/api/study-material', {
+    const response = await fetch('https://study-assistant-api-rqc7.onrender.com/api/study-material', {
       method: 'POST',
       body: formData, // FormData use karne par Content-Type header manually set nahi karte
     });
